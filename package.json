@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A quick Kubernetes YAML manifest sanity checker for identifying security issues",
   "author": "Kubernetes Security Team <k8s-security@example.com>",
-  "homepage": "https://k8s-security.example.com/yprobe",
+  "homepage": "/",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -54,5 +54,10 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.0.9"
   }
 }
