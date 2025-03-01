@@ -38,16 +38,6 @@ const DocumentDisplay = ({ document, index, securityIssues, setSelectedIssue, on
     issue.documentIndex === undefined || issue.documentIndex === index
   );
 
-  // Define whether this is a Pod workload for issue filtering
-  // (Used for determining which issues to show in the security summary)
-  const isPodWorkload = document.kind === 'Pod' || 
-    document.kind === 'Deployment' || 
-    document.kind === 'StatefulSet' || 
-    document.kind === 'DaemonSet' || 
-    document.kind === 'ReplicaSet' || 
-    document.kind === 'Job' || 
-    document.kind === 'CronJob';
-  
   // Keep all security issues for display
   const filteredIssues = documentIssues;
 
