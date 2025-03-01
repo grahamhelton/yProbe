@@ -1,24 +1,19 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import _ from 'lodash';
-import yaml from 'js-yaml';
 import Confetti from 'react-confetti';
-import { diffLines } from 'diff';
 
 // Import utilities
 import { parseYamlContent, yamlDataToString, isScannableKind } from './utils/yamlUtils';
 import { scanForSecurityIssues } from './utils/scanUtils';
 import { fixSingleSecurityIssue, fixAllSecurityIssues } from './utils/securityUtils';
-import { applyAllRecommendations } from './utils/recommendationUtils';
 
 // Import components
 import Documentation from './components/Documentation';
-import YamlRenderer from './components/YamlRenderer';
 import SecurityIssueDetails from './components/SecurityIssueDetails';
 import ConnectionLine from './components/ConnectionLine';
 import Starfield from './components/Starfield';
 import DemoTitle from './components/DemoTitle';
 import DiffView from './components/DiffView';
-import SecuritySummary from './components/SecuritySummary';
 import DocumentDisplay from './components/DocumentDisplay';
 import DropZone from './components/DropZone';
 import FileControls from './components/FileControls';
@@ -42,7 +37,7 @@ function App() {
   const [isFixed, setIsFixed] = useState(false);
   const [fixedCount, setFixedCount] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
-  const [showStarfield, setShowStarfield] = useState(true);
+  const [showStarfield] = useState(true);
   const [showDemo, setShowDemo] = useState(false);
   const [demoType, setDemoType] = useState(null);
   const [showDocumentation, setShowDocumentation] = useState(false);
@@ -125,18 +120,15 @@ function App() {
       setYamlHistory([]);
       
       // Check for unsupported kinds (will still display them, but with a warning)
-      let unsupportedKindsFound = false;
       let unsupportedKinds = [];
       
       if (isMulti) {
         documents.forEach(doc => {
           if (doc && doc.kind && !isScannableKind(doc)) {
-            unsupportedKindsFound = true;
             unsupportedKinds.push(doc.kind);
           }
         });
       } else if (parsedData && parsedData.kind && !isScannableKind(parsedData)) {
-        unsupportedKindsFound = true;
         unsupportedKinds.push(parsedData.kind);
       }
       
@@ -338,8 +330,10 @@ function App() {
   
   /**
    * Handle fixing all security issues
+   * Not actively used but kept for future enhancements
    */
-  const handleFixAll = useCallback(() => {
+  // eslint-disable-next-line no-unused-vars
+  const fixAllIssues = useCallback(() => {
     if (!yamlData || securityIssues.length === 0) return;
     
     // Store the number of issues that will be fixed
@@ -448,6 +442,7 @@ function App() {
     
     // Reset feedback after delay
     setTimeout(() => setFixSuccess(false), 3000);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [yamlData, securityIssues, isMultiDoc]);
   
   /**
@@ -512,6 +507,7 @@ function App() {
   /**
    * Handle undo action for security fixes
    */
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleUndo = useCallback(() => {
     if (yamlHistory.length === 0) return;
     
