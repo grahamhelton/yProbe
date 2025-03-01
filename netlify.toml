@@ -1,0 +1,11 @@
+[build]
+  command = "npm run build"
+  publish = "build"
+  
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[context.production]
+  environment = { SITE_URL = "https://yprobe.loworbitsecurity.com" }

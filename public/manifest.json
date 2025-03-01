@@ -1,6 +1,6 @@
 {
   "short_name": "yProbe",
-  "name": "yProbe - Kubernetes YAML Checker",
+  "name": "yProbe - Kubernetes YAML Checker | LowOrbitSecurity",
   "description": "A quick Kubernetes YAML manifest sanity checker for identifying security issues",
   "icons": [
     {
