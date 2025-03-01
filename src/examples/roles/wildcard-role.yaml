@@ -1,0 +1,23 @@
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: dangerous-wildcard-role
+  namespace: default
+rules:
+- apiGroups: ["*"]
+  resources: ["*"]
+  verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: dangerous-binding
+  namespace: default
+subjects:
+- kind: ServiceAccount
+  name: webapp
+  namespace: default
+roleRef:
+  kind: Role
+  name: dangerous-wildcard-role
+  apiGroup: rbac.authorization.k8s.io

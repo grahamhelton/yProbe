@@ -1,0 +1,52 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mixed-severity-pod
+  labels:
+    app: mixed-severity-example
+spec:
+  # Medium severity issues
+  automountServiceAccountToken: true
+  
+  # Containers with different security profiles
+  containers:
+  - name: critical-container
+    image: ubuntu:20.04
+    command: ["sleep", "infinity"]
+    # Critical severity issues
+    securityContext:
+      privileged: true
+      runAsUser: 0
+    
+  - name: high-severity-container
+    image: nginx:latest
+    # High severity issues
+    securityContext:
+      capabilities:
+        add: ["SYS_ADMIN"]
+    volumeMounts:
+    - name: host-volume
+      mountPath: /host
+  
+  - name: medium-severity-container
+    image: python:3.9
+    command: ["python", "-m", "http.server", "8080"]
+    # Medium severity issues
+    securityContext:
+      allowPrivilegeEscalation: true
+  
+  - name: low-severity-container
+    image: alpine:latest
+    command: ["sleep", "infinity"]
+    # Low severity issues - no major security problems
+    securityContext:
+      runAsUser: 1000
+      capabilities:
+        drop: ["ALL"]
+      allowPrivilegeEscalation: false
+  
+  volumes:
+  - name: host-volume
+    hostPath:
+      path: /etc
+      type: Directory

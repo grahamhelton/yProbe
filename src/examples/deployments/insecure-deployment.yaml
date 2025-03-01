@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: insecure-deployment
+  labels:
+    app: insecure-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: insecure-app
+  template:
+    metadata:
+      labels:
+        app: insecure-app
+    spec:
+      hostNetwork: true
+      containers:
+      - name: insecure-container
+        image: ubuntu:latest
+        command: ["/bin/bash", "-c", "sleep infinity"]
+        securityContext:
+          privileged: true
+          runAsUser: 0
+          capabilities:
+            add: ["ALL"]
+        volumeMounts:
+        - name: docker-socket
+          mountPath: /var/run/docker.sock
+        - name: host-root
+          mountPath: /host
+      volumes:
+      - name: docker-socket
+        hostPath:
+          path: /var/run/docker.sock
+      - name: host-root
+        hostPath:
+          path: /

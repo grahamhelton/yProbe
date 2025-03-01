@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: insecure-ubuntu-pod
+  labels:
+    app: insecure-demo
+spec:
+  # Host namespace issues - all of these are security risks
+  hostNetwork: true
+  hostPID: true
+  hostIPC: true
+  
+  # Service account token automatically mounted
+  automountServiceAccountToken: true
+  
+  # No security context at pod level
+  
+  containers:
+  - name: insecure-ubuntu
+    image: ubuntu:22.04
+    command: ["sleep", "infinity"]
+    
+    # Very privileged security context
+    securityContext:
+      privileged: true
+      runAsUser: 0  # Running as root
+      allowPrivilegeEscalation: true
+      capabilities:
+        add: ["ALL"]  # All capabilities - very dangerous
+        drop: []  # Not dropping any capabilities

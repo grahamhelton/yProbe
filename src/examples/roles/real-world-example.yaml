@@ -1,0 +1,58 @@
+# A more realistic example combining RBAC permissions with Pod specs
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin-service-account
+  namespace: default
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: admin-role
+rules:
+- apiGroups: ["", "apps", "batch"]
+  resources: ["pods", "deployments", "jobs"]
+  verbs: ["create", "delete", "get", "list", "patch", "update", "watch"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get", "list"]
+---
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: admin-binding
+subjects:
+- kind: ServiceAccount
+  name: admin-service-account
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: admin-role
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin-deployment
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin-pod
+  template:
+    metadata:
+      labels:
+        app: admin-pod
+    spec:
+      serviceAccountName: admin-service-account
+      containers:
+      - name: admin-container
+        image: nginx:latest
+        securityContext:
+          privileged: true
+          allowPrivilegeEscalation: true
+          runAsUser: 0
+          capabilities:
+            add: ["NET_ADMIN", "SYS_ADMIN"]

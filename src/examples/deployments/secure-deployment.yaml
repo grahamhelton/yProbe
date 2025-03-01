@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: secure-webserver
+  labels:
+    app: secure-webserver
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: secure-webserver
+  template:
+    metadata:
+      labels:
+        app: secure-webserver
+    spec:
+      securityContext:
+        runAsNonRoot: true
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+      - name: webserver
+        image: nginx:1.21
+        ports:
+        - containerPort: 80
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsUser: 1000
+          capabilities:
+            drop: ["ALL"]
+          readOnlyRootFilesystem: true
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        volumeMounts:
+        - name: tmp-volume
+          mountPath: /tmp
+        - name: nginx-conf
+          mountPath: /etc/nginx/conf.d
+      volumes:
+      - name: tmp-volume
+        emptyDir: {}
+      - name: nginx-conf
+        configMap:
+          name: nginx-config

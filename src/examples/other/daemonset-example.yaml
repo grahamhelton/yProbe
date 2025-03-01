@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-monitoring
+  namespace: monitoring
+  labels:
+    app: node-exporter
+spec:
+  selector:
+    matchLabels:
+      app: node-exporter
+  template:
+    metadata:
+      labels:
+        app: node-exporter
+    spec:
+      tolerations:
+      - key: node-role.kubernetes.io/master
+        effect: NoSchedule
+      hostNetwork: true  # Security risk but common for monitoring
+      hostPID: true      # Security risk but needed to monitor host processes
+      containers:
+      - name: node-exporter
+        image: prom/node-exporter:v1.3.1
+        args:
+        - --path.procfs=/host/proc
+        - --path.sysfs=/host/sys
+        securityContext:
+          runAsUser: 65534  # nobody user
+          runAsGroup: 65534
+          capabilities:
+            add:
+            - SYS_TIME  # Example of a specific capability
+        ports:
+        - containerPort: 9100
+          protocol: TCP
+        volumeMounts:
+        - name: proc
+          mountPath: /host/proc
+          readOnly: true
+        - name: sys
+          mountPath: /host/sys
+          readOnly: true
+      volumes:
+      - name: proc
+        hostPath:
+          path: /proc
+      - name: sys
+        hostPath:
+          path: /sys

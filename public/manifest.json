@@ -1,6 +1,7 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "yProbe",
+  "name": "yProbe - Kubernetes YAML Checker",
+  "description": "A quick Kubernetes YAML manifest sanity checker for identifying security issues",
   "icons": [
     {
       "src": "favicon.ico",
@@ -20,6 +21,9 @@
   ],
   "start_url": ".",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "orientation": "any",
+  "categories": ["utilities", "security", "developer tools"],
+  "lang": "en-US"
 }

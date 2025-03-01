@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: insecure-maintenance
+spec:
+  schedule: "0 1 * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          hostNetwork: true
+          hostPID: true
+          containers:
+          - name: maintenance
+            image: ubuntu:20.04
+            command: ["/bin/bash", "-c", "echo 'Starting maintenance'; sleep 30; echo 'Maintenance complete'"]
+            securityContext:
+              privileged: true
+              runAsUser: 0
+              capabilities:
+                add: ["SYS_ADMIN", "NET_ADMIN"]
+            volumeMounts:
+            - name: host-path
+              mountPath: /host
+          volumes:
+          - name: host-path
+            hostPath:
+              path: /
+          restartPolicy: Never

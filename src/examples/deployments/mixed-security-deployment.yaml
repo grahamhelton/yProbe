@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mixed-security-app
+  labels:
+    app: mixed-security
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: mixed-security
+  template:
+    metadata:
+      labels:
+        app: mixed-security
+    spec:
+      serviceAccountName: default
+      automountServiceAccountToken: true
+      containers:
+      - name: app
+        image: python:3.9-slim
+        command: ["python", "-m", "http.server", "8080"]
+        ports:
+        - containerPort: 8080
+        securityContext:
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop: ["ALL"]
+        resources:
+          limits:
+            cpu: 200m
+            memory: 256Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
+        volumeMounts:
+        - name: app-data
+          mountPath: /app/data
+      - name: sidecar
+        image: alpine:latest
+        command: ["sh", "-c", "while true; do sleep 30; done"]
+        securityContext:
+          runAsUser: 0
+          capabilities:
+            add: ["NET_ADMIN"]
+      volumes:
+      - name: app-data
+        hostPath:
+          path: /data
+          type: DirectoryOrCreate

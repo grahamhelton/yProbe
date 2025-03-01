@@ -1,0 +1,11 @@
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: apigroup-wildcard
+rules:
+- apiGroups: ["*"]
+  resources: ["pods", "services"]
+  verbs: ["get", "list"]
+- apiGroups: ["*"]
+  resources: ["deployments"]
+  verbs: ["update", "patch", "delete"]

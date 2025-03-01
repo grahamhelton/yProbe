@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: insecure-nginx-pod
+  labels:
+    app: insecure-nginx
+spec:
+  hostNetwork: true
+  hostPID: true
+  hostIPC: true
+  containers:
+  - name: nginx
+    image: nginx:1.19
+    ports:
+    - containerPort: 80
+    securityContext:
+      privileged: true
+      allowPrivilegeEscalation: true
+      runAsUser: 0
+      capabilities:
+        add: ["SYS_ADMIN", "NET_ADMIN"]
+    volumeMounts:
+    - name: host-fs
+      mountPath: /host
+  volumes:
+  - name: host-fs
+    hostPath:
+      path: /
